@@ -23,7 +23,8 @@ export function buildTreemapLayout(
     .tile(treemapSquarify.ratio(1.1))
     .size([width, height])
     .paddingInner(2)
-    .paddingOuter(4);
+    .paddingOuter(4)
+    .paddingTop((node) => (node.depth === 1 ? 28 : 0));
 
   return layout(root);
 }

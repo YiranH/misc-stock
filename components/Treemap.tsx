@@ -18,10 +18,33 @@ export default function Treemap({ rootData, width, height }: TreemapProps) {
     [rootData, width, height]
   );
   const leaves = rectRoot.leaves();
+  const sectorNodes = rectRoot.children ?? [];
   const { setHover, setHoverEl } = useTreemapStore();
 
   return (
     <svg width={width} height={height} className="bg-slate-850 rounded-lg">
+      {sectorNodes.map((sector) => {
+        const sectorName = sector.data.name;
+        const w = sector.x1 - sector.x0;
+        const h = sector.y1 - sector.y0;
+        if (!sectorName) return null;
+
+        const approxTextWidth = sectorName.length * 6 + 12;
+        const hasRoom = w >= approxTextWidth && h >= 36;
+        if (!hasRoom) return null;
+
+        return (
+          <text
+            key={`sector-${sectorName}`}
+            x={sector.x0 + 8}
+            y={sector.y0 + 20}
+            pointerEvents="none"
+            className="select-none fill-white/70 text-[11px] font-semibold tracking-wide uppercase"
+          >
+            {sectorName}
+          </text>
+        );
+      })}
       {leaves.map(n => {
         const q = n.data.data!; // Quote present on leaves
         const w = n.x1 - n.x0, h = n.y1 - n.y0;
