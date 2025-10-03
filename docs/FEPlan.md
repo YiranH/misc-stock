@@ -137,7 +137,7 @@ function mix(a:string,b:string,t:number){ const ah=parseInt(a.slice(1),16), bh=p
 
 ```ts
 // lib/mock.ts
-import symbols from './nasdaq100.json';
+import symbols from './nasdaq100_symbols.json';
 export function mockQuotes(): Quote[] {
   return symbols.map(s => ({
     symbol: s.symbol, name: s.name,

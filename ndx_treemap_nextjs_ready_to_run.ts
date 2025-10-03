@@ -168,7 +168,7 @@ pnpm dev # http://localhost:3000
 - `lib/d3Treemap.ts` — typed treemap builder
 - `lib/useMeasure.ts` — ResizeObserver hook
 - `lib/mock.ts` — mock data + hierarchy builder
-- `data/nasdaq100.json` — sample NDX membership metadata
+- `data/nasdaq100_symbols.json` — sample NASDAQ-100 ticker list
 
 ## Swap to real data later
 Replace `mockQuotes()` in `app/page.tsx` with a server route `/api/ndx` that returns quotes + mini-sparklines; keep the same `Quote` shape.
@@ -477,7 +477,7 @@ export function colorForChange(pct: number) {
 
 ## lib/mock.ts
 ```ts
-import symbols from '@/data/nasdaq100.json';
+import symbols from '@/data/nasdaq100_symbols.json';
 import { Quote, NodeDatum } from '@/types';
 
 export function mockQuotes(): Quote[] {
@@ -590,7 +590,7 @@ export type NodeDatum = {
 
 ---
 
-## data/nasdaq100.json
+## data/nasdaq100_symbols.json
 ```json
 [
   { "symbol": "MSFT", "name": "Microsoft Corporation", "sector": "Technology", "industry": "Software - Infrastructure", "weight": 9.5 },

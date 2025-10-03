@@ -7,7 +7,7 @@
 - Bundle an automated refresh flow suitable for Railway cron jobs while exposing an on-demand refresh endpoint.
 
 ## 2. High-Level Architecture
-1. **Roster Metadata**: Keep `data/nasdaq100.json` as the authoritative list of symbols with name/sector/industry/weight.
+1. **Roster Metadata**: Use `data/nasdaq100_symbols.json` (or `SYMBOLS` env override) as the ticker universe; hydrate name/sector/industry from Yahoo.
 2. **Yahoo Fetcher Layer**: Batched requests to Yahoo Finance for quote + sparkline + summary data, normalized into our `Quote` shape.
 3. **Persistence Layer**: MongoDB collections for `quotes_latest`, `quotes_daily` (optional snapshots), and optional `sync_runs` for cron visibility.
 4. **Caching**: In-memory cache (process lifetime) plus MongoDB serving as durable cache. Disk cache no longer required.
@@ -101,4 +101,3 @@
 ## 4. Open Questions
 - Do we want to persist longer history (e.g. intraday snapshots) for later analytics? If yes, expand `quotes_daily` storage strategy.
 - Should we add alerting when refresh fails repeatedly (e.g. send Slack/webhook)?
-

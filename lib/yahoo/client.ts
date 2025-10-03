@@ -8,7 +8,7 @@ const SPARK_OPTIONS = {
   range: '1d' as const,
   interval: '5m' as const,
 };
-const SUMMARY_MODULES = ['summaryDetail', 'defaultKeyStatistics', 'price'] as const;
+const SUMMARY_MODULES = ['summaryDetail', 'defaultKeyStatistics', 'price', 'assetProfile'] as const;
 
 type YahooQuoteResponse = Awaited<ReturnType<typeof yahooFinance.quote>>;
 type YahooQuote = YahooQuoteResponse extends (infer U)[] ? U : never;
@@ -88,11 +88,14 @@ function deriveChangePct(rawChangePct: number | null, last: number | null, previ
   return 0;
 }
 
-function pickName(entry: RosterEntry, quote: YahooQuote | null): string {
+function pickName(entry: RosterEntry, quote: YahooQuote | null, summary: any): string {
+  const summaryPrice = summary?.price;
+  if (summaryPrice?.longName) return summaryPrice.longName;
+  if (summaryPrice?.shortName) return summaryPrice.shortName;
   if (quote?.longName) return quote.longName;
   if (quote?.shortName) return quote.shortName;
   if (quote?.displayName) return quote.displayName;
-  return entry.name;
+  return entry.name ?? entry.symbol;
 }
 
 export async function fetchQuoteBundles(symbols: string[]): Promise<Map<string, QuoteBundle>> {
@@ -155,6 +158,7 @@ export function normalizeQuote(entry: RosterEntry, bundle: QuoteBundle, fetchedA
   const quote = bundle.quote;
   const summary = bundle.summary as any;
   const spark = bundle.spark;
+  const assetProfile = summary?.assetProfile ?? null;
 
   const marketCap = ensureNumber(quote?.marketCap) ?? ensureNumber(summary?.summaryDetail?.marketCap?.raw);
   const peRatio = ensureNumber(quote?.trailingPE) ?? ensureNumber(summary?.summaryDetail?.trailingPE) ?? ensureNumber(summary?.defaultKeyStatistics?.trailingPE);
@@ -177,10 +181,10 @@ export function normalizeQuote(entry: RosterEntry, bundle: QuoteBundle, fetchedA
 
   const normalized: Quote = {
     symbol: entry.symbol,
-    name: pickName(entry, quote ?? null),
-    sector: entry.sector,
-    industry: entry.industry,
-    weight: entry.weight ?? null,
+    name: pickName(entry, quote ?? null, summary),
+    sector: assetProfile?.sector ?? entry.sector ?? null,
+    industry: assetProfile?.industry ?? entry.industry ?? null,
+    weight: null,
     marketCap,
     changePct,
     last,

@@ -1,5 +1,26 @@
-import symbols from '@/data/nasdaq100.json';
+import rawSymbols from '@/data/nasdaq100_symbols.json';
 import { Quote, QuoteSpark } from '@/types';
+
+const SYMBOLS = (rawSymbols as string[]).map((symbol) => symbol.toUpperCase());
+
+const SECTORS = [
+  'Technology',
+  'Consumer Discretionary',
+  'Communication Services',
+  'Healthcare',
+  'Financials',
+  'Industrials',
+];
+
+const INDUSTRIES = [
+  'Software',
+  'Semiconductors',
+  'Internet Retail',
+  'Entertainment',
+  'Hardware',
+  'Financial Services',
+  'Biotechnology',
+];
 
 function buildMockSpark(base: number): QuoteSpark {
   const points = 48;
@@ -24,19 +45,22 @@ function buildMockSpark(base: number): QuoteSpark {
 
 export function mockQuotes(): Quote[] {
   const fetchedAt = new Date().toISOString();
-  return symbols.map((s) => {
+  const quotes = SYMBOLS.map((symbol, index) => {
     const spark = buildMockSpark(75 + Math.random() * 150);
     const last = spark.closes[spark.closes.length - 1];
     const first = spark.closes[0];
     const changePct = Number((((last - first) / first) * 100).toFixed(2));
     const previousClose = Number((last / (1 + changePct / 100)).toFixed(2));
+    const sector = SECTORS[index % SECTORS.length];
+    const industry = INDUSTRIES[index % INDUSTRIES.length];
+    const marketCap = Math.round((100 + index * 3 + Math.random() * 20) * 1e9);
     return {
-      symbol: s.symbol,
-      name: s.name,
-      sector: s.sector,
-      industry: s.industry,
-      weight: s.weight ?? null,
-      marketCap: Math.max(1, s.weight) * 1e10,
+      symbol,
+      name: `${symbol} Corp.`,
+      sector,
+      industry,
+      weight: null,
+      marketCap,
       changePct,
       last,
       previousClose,
@@ -59,6 +83,19 @@ export function mockQuotes(): Quote[] {
       spark,
     };
   });
+
+  const totalCap = quotes.reduce((sum, quote) => sum + (quote.marketCap ?? 0), 0);
+  if (totalCap > 0) {
+    quotes.forEach((quote) => {
+      if (quote.marketCap && quote.marketCap > 0) {
+        quote.weight = Number(((quote.marketCap / totalCap) * 100).toFixed(2));
+      } else {
+        quote.weight = null;
+      }
+    });
+  }
+
+  return quotes;
 }
 
 export { buildHierarchy } from './transform';

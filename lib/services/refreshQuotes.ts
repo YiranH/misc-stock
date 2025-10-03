@@ -45,6 +45,24 @@ function computeAgeMs(timestamp: string | null): number | null {
   return Date.now() - ts;
 }
 
+function applyMarketCapWeights(quotes: Quote[]): void {
+  if (!quotes.length) return;
+  const eligibleCaps = quotes
+    .map((quote) => (typeof quote.marketCap === 'number' && quote.marketCap > 0 ? quote.marketCap : null))
+    .filter((cap): cap is number => cap !== null);
+  const totalCap = eligibleCaps.reduce((sum, cap) => sum + cap, 0);
+  if (totalCap <= 0) {
+    quotes.forEach((quote) => {
+      quote.weight = null;
+    });
+    return;
+  }
+  quotes.forEach((quote) => {
+    const cap = typeof quote.marketCap === 'number' && quote.marketCap > 0 ? quote.marketCap : null;
+    quote.weight = cap ? Number(((cap / totalCap) * 100).toFixed(4)) : null;
+  });
+}
+
 export async function loadQuotes(options: LoadOptions): Promise<RefreshResult> {
   const { maxAgeMs, force = false } = options;
   const cached = getCachedQuotes(maxAgeMs);
@@ -127,6 +145,8 @@ export async function refreshQuotes(options: RefreshOptions = {}): Promise<Refre
     if (!finalQuotes.length) {
       throw new Error('Failed to load any quotes from Yahoo Finance');
     }
+
+    applyMarketCapWeights(finalQuotes);
 
     await upsertLatestQuotes(toPersist);
     if (recordDaily && toPersist.length) {

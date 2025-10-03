@@ -16,6 +16,7 @@ pnpm dev                     # http://localhost:3000
 - `MONGODB_URI` (required) — connection string used across the API, refresh script, and SWR-backed UI.
 - `MONGODB_DB` (optional) — defaults to `stock-analyzer`.
 - `REFRESH_TOKEN` — shared secret for `POST /api/ndx/refresh`.
+- `SYMBOLS` (optional) — comma-separated ticker override; defaults to `data/nasdaq100_symbols.json`.
 - `YAHOO_APP_ID` — optional Yahoo app id if you have one; not required for anonymous usage.
 
 ## Data refresh
@@ -39,5 +40,5 @@ pnpm dev                     # http://localhost:3000
 - `lib/yahoo/client.ts` — Yahoo Finance fetch + normalization
 - `lib/d3Treemap.ts` — typed treemap builder
 - `lib/transform.ts` — roster → treemap hierarchy builder
-- `data/nasdaq100.json` — static NDX membership metadata
+- `data/nasdaq100_symbols.json` — default NASDAQ-100 ticker universe (override via `SYMBOLS`)
 ```
