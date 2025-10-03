@@ -13,7 +13,10 @@ export function buildTreemapLayout(
   height: number
 ): HierarchyRectangularNode<NodeDatum> {
   const root: HierarchyNode<NodeDatum> = hierarchy(rootData)
-    .sum((d) => d.data?.marketCap ?? 0)
+    .sum((d) => {
+      const marketCap = d.data?.marketCap ?? 0;
+      return marketCap > 0 ? Math.pow(marketCap, 0.7) : 0;
+    })
     .sort((a, b) => (b.value ?? 0) - (a.value ?? 0));
 
   const layout = treemap<NodeDatum>()
