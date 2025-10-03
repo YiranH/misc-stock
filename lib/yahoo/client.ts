@@ -10,11 +10,21 @@ const SPARK_OPTIONS = {
 };
 const SUMMARY_MODULES = ['summaryDetail', 'defaultKeyStatistics', 'price', 'assetProfile'] as const;
 
-type YahooQuoteResponse = Awaited<ReturnType<typeof yahooFinance.quote>>;
-type YahooQuote = YahooQuoteResponse extends (infer U)[] ? U : never;
-type YahooSummary = Awaited<ReturnType<typeof yahooFinance.quoteSummary>>;
-type YahooSparkResponse = Awaited<ReturnType<typeof yahooFinance.spark>>;
-type YahooSpark = YahooSparkResponse extends (infer U)[] ? U : never;
+type YahooQuote = Record<string, any>;
+type YahooSummary = Record<string, any>;
+type YahooSpark = {
+  symbol: string;
+  response?: Array<{
+    timestamp?: Array<number | string | null | undefined>;
+    close?: Array<number | string | null | undefined>;
+    interval?: string;
+    dataGranularity?: string;
+  }>;
+};
+
+type SparkFetcher = (symbols: string[], options: typeof SPARK_OPTIONS) => Promise<YahooSpark[]>;
+
+const yahooFinanceWithSpark = yahooFinance as typeof yahooFinance & { spark?: SparkFetcher };
 
 type QuoteBundle = {
   quote: YahooQuote | null;
@@ -46,6 +56,14 @@ function chunk<T>(items: T[], size: number): T[][] {
     result.push(items.slice(i, i + size));
   }
   return result;
+}
+
+async function fetchSparkData(symbols: string[]): Promise<YahooSpark[]> {
+  const sparkFn = yahooFinanceWithSpark.spark;
+  if (typeof sparkFn !== 'function') {
+    throw new Error('yahooFinance spark API is unavailable');
+  }
+  return sparkFn(symbols, SPARK_OPTIONS);
 }
 
 function ensureNumber(value: unknown): number | null {
@@ -137,7 +155,7 @@ export async function fetchQuoteBundles(symbols: string[]): Promise<Map<string, 
 
   for (const slice of chunk(symbols, SPARK_BATCH_SIZE)) {
     try {
-      const sparks = await yahooFinance.spark(slice, SPARK_OPTIONS);
+      const sparks = await fetchSparkData(slice);
       sparks.forEach((entry) => {
         const target = bundles.get(entry.symbol);
         if (target) target.spark = entry;

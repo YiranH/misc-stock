@@ -1,17 +1,18 @@
-import { Collection, BulkWriteOperation } from 'mongodb';
+import { Collection, AnyBulkWriteOperation } from 'mongodb';
+import type { Document } from 'mongodb';
 import { Quote, QuoteDocument } from '@/types';
 import { getCollection } from '@/lib/db/mongo';
 
 export type QuoteLatestDoc = QuoteDocument;
 
-export type QuoteDailyDoc = {
+export type QuoteDailyDoc = Document & {
   symbol: string;
   asOf: string;
   quote: Quote;
   fetchedAt: string;
 };
 
-export type SyncRunDoc = {
+export type SyncRunDoc = Document & {
   type: 'refresh';
   createdAt: string;
   finishedAt?: string;
@@ -55,7 +56,7 @@ export async function getLatestQuotesMetadata(): Promise<{ count: number; newest
 export async function upsertLatestQuotes(docs: QuoteLatestDoc[]): Promise<void> {
   if (!docs.length) return;
   const col = await getLatestCollection();
-  const ops: BulkWriteOperation<QuoteLatestDoc>[] = docs.map((doc) => ({
+  const ops: AnyBulkWriteOperation<QuoteLatestDoc>[] = docs.map((doc) => ({
     updateOne: {
       filter: { _id: doc._id },
       update: { $set: doc },
@@ -68,7 +69,7 @@ export async function upsertLatestQuotes(docs: QuoteLatestDoc[]): Promise<void> 
 export async function recordDailySnapshots(docs: QuoteLatestDoc[]): Promise<void> {
   if (!docs.length) return;
   const col = await getDailyCollection();
-  const ops: BulkWriteOperation<QuoteDailyDoc>[] = docs.map((doc) => {
+  const ops: AnyBulkWriteOperation<QuoteDailyDoc>[] = docs.map((doc) => {
     const asOf = doc.quote.fetchedAt.split('T')[0];
     return {
       updateOne: {

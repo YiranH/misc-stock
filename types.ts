@@ -1,3 +1,5 @@
+import type { Document } from 'mongodb';
+
 export type QuoteSpark = {
   interval: string;
   timestamps: number[];
@@ -39,7 +41,7 @@ export type NodeDatum = {
   data?: Quote;
 };
 
-export type QuoteDocument = {
+export type QuoteDocument = Document & {
   _id: string;
   fetchedAt: string;
   quote: Quote;

@@ -1,4 +1,4 @@
-import { MongoClient, Db, Collection } from 'mongodb';
+import { MongoClient, Db, Collection, Document } from 'mongodb';
 import { getMongoDbName, getMongoUri } from '@/lib/env';
 
 let clientPromise: Promise<MongoClient> | null = null;
@@ -55,7 +55,8 @@ async function ensureIndexes(db: Db): Promise<void> {
   ]);
 }
 
-export async function getCollection<T>(name: string): Promise<Collection<T>> {
+export async function getCollection<T extends Document>(name: string): Promise<Collection<T>> {
   const db = await getDb();
-  return db.collection<T>(name);
+  // The MongoDB driver constrains collection schemas to Document; cast to align with our typed records.
+  return db.collection(name) as Collection<T>;
 }

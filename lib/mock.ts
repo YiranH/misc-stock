@@ -45,7 +45,7 @@ function buildMockSpark(base: number): QuoteSpark {
 
 export function mockQuotes(): Quote[] {
   const fetchedAt = new Date().toISOString();
-  const quotes = SYMBOLS.map((symbol, index) => {
+  const quotes = SYMBOLS.map<Quote>((symbol, index) => {
     const spark = buildMockSpark(75 + Math.random() * 150);
     const last = spark.closes[spark.closes.length - 1];
     const first = spark.closes[0];

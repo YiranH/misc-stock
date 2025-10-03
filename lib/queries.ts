@@ -31,3 +31,14 @@ export async function selectHealthSummary() {
     maxAgeMs: API_MAX_AGE_MS,
   };
 }
+
+export type SelectCompanyDetailOptions = { force?: boolean };
+
+export async function selectCompanyDetail(symbol: string, options: SelectCompanyDetailOptions = {}): Promise<Quote | null> {
+  const cleaned = symbol.trim().toUpperCase();
+  if (!cleaned) return null;
+  const { force = false } = options;
+  const result = await loadQuotes({ maxAgeMs: API_MAX_AGE_MS, force });
+  const match = result.quotes.find((quote) => quote.symbol === cleaned);
+  return match ?? null;
+}

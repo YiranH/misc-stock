@@ -8,7 +8,7 @@ type Params = { params: { symbol: string } };
 
 export async function GET(_req: Request, { params }: Params) {
   const symbol = params.symbol.toUpperCase();
-  const detail = selectCompanyDetail(symbol);
+  const detail = await selectCompanyDetail(symbol);
   if (!detail) {
     return NextResponse.json({ error: `Unknown symbol ${symbol}` }, { status: 404 });
   }
