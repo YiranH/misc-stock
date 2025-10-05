@@ -5,7 +5,7 @@
 - Provide a manual trigger via `workflow_dispatch` for ad-hoc refreshes.
 
 ## Pre-flight Checklist
-- Verify the script works headlessly: `pnpm tsx scripts/refreshNdx.ts --since 180` (Node 20+, tsx, roster data in `data/nasdaq100_symbols.json`).
+- Verify the script works headlessly: `pnpm tsx scripts/refreshNdx.ts --since 180` (Node 20+, pnpm 7.x to match `pnpm-lock.yaml`, roster data in `data/nasdaq100_symbols.json`).
 - Review roster overrides or Yahoo dependencies; ensure no local-only files are required.
 
 ## Secrets & Configuration
@@ -44,7 +44,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v3
         with:
-          version: 8
+          version: 7.32.4
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
