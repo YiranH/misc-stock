@@ -66,7 +66,7 @@ export default function Page() {
           Last update: {data.fetchedAt ? new Date(data.fetchedAt).toLocaleString() : 'unknown'}
           {data.source ? ` · Source: ${data.source}` : ''}
         </div>
-        <p>Data based on the latest trading day.</p>
+        <p>Data updates daily after market close.</p>
       </div>
       <div ref={ref} className="h-[72vh] w-full">
         {width > 0 && height > 0 && (
