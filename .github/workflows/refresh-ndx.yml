@@ -1,0 +1,39 @@
+name: Refresh NDX Quotes
+
+on:
+  schedule:
+    - cron: '30 21 * * 1-5'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    env:
+      MONGO_URL: ${{ secrets.MONGO_URL }}
+      MONGODB_DB: ${{ secrets.MONGODB_DB }}
+      REFRESH_TOKEN: ${{ secrets.REFRESH_TOKEN }}
+      YAHOO_APP_ID: ${{ secrets.YAHOO_APP_ID }}
+      SYMBOLS: ${{ secrets.SYMBOLS }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v3
+        with:
+          version: 8
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Refresh quotes
+        run: pnpm tsx scripts/refreshNdx.ts --since 180

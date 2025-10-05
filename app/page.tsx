@@ -61,9 +61,12 @@ export default function Page() {
     <main className="p-6 space-y-4">
       <h1 className="text-2xl font-bold">NASDAQ‑100 Treemap</h1>
       <Controls sectors={sectors} />
-      <div className="text-xs text-white/60">
-        Last update: {data.fetchedAt ? new Date(data.fetchedAt).toLocaleString() : 'unknown'}
-        {data.source ? ` · Source: ${data.source}` : ''}
+      <div className="space-y-1 text-xs text-white/60">
+        <div>
+          Last update: {data.fetchedAt ? new Date(data.fetchedAt).toLocaleString() : 'unknown'}
+          {data.source ? ` · Source: ${data.source}` : ''}
+        </div>
+        <p>Data based on the latest trading day.</p>
       </div>
       <div ref={ref} className="h-[72vh] w-full">
         {width > 0 && height > 0 && (
