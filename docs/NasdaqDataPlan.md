@@ -18,7 +18,7 @@
 
 ### 3.1 Dependencies & Configuration
 - Add npm packages: `yahoo-finance2`, `mongodb`.
-- Update `.env.example` and README with `MONGODB_URI`, `YAHOO_APP_ID` (if used), `REFRESH_TOKEN`.
+- Update `.env.example` and README with `MONGO_URL`, `YAHOO_APP_ID` (if used), `REFRESH_TOKEN`.
 - Ensure `pnpm-lock.yaml` reflects new deps.
 
 ### 3.2 Type & Data Model Updates
@@ -78,7 +78,7 @@
 ### 3.11 Documentation & Environment
 - Update README with setup steps:
   - Install new dependencies.
-  - Configure `.env.local` with `MONGODB_URI`, `REFRESH_TOKEN`.
+  - Configure `.env.local` with `MONGO_URL`, `REFRESH_TOKEN`.
   - Running `pnpm tsx scripts/refreshNdx.ts --force` locally.
   - Railway cron configuration (`pnpm tsx scripts/refreshNdx.ts --since 15`).
 - Add `docs/NasdaqDataPlan.md` (this file) reference in project docs index if applicable.

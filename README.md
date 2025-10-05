@@ -13,7 +13,7 @@ pnpm dev                     # http://localhost:3000
 ```
 
 ### Environment
-- `MONGODB_URI` (required) — connection string used across the API, refresh script, and SWR-backed UI.
+- `MONGO_URL` (required) — connection string used across the API, refresh script, and SWR-backed UI.
 - `MONGODB_DB` (optional) — defaults to `stock-analyzer`.
 - `REFRESH_TOKEN` — shared secret for `POST /api/ndx/refresh`.
 - `SYMBOLS` (optional) — comma-separated ticker override; defaults to `data/nasdaq100_symbols.json`.

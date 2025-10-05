@@ -1,9 +1,9 @@
-const REQUIRED_ENV_VARS = ['MONGODB_URI'] as const;
+const REQUIRED_ENV_VARS = ['MONGO_URL'] as const;
 
 type EnvVar = (typeof REQUIRED_ENV_VARS)[number];
 
 type EnvShape = {
-  MONGODB_URI: string;
+  MONGO_URL: string;
   MONGODB_DB?: string;
   REFRESH_TOKEN?: string;
   YAHOO_APP_ID?: string;
@@ -18,7 +18,7 @@ function readEnvVar(key: EnvVar): string {
 }
 
 export function getMongoUri(): string {
-  return readEnvVar('MONGODB_URI');
+  return readEnvVar('MONGO_URL');
 }
 
 export function getMongoDbName(): string {
@@ -35,7 +35,7 @@ export function getRefreshToken(): string | null {
 
 export function getEnvSnapshot(): EnvShape {
   return {
-    MONGODB_URI: process.env.MONGODB_URI ?? '',
+    MONGO_URL: process.env.MONGO_URL ?? '',
     MONGODB_DB: process.env.MONGODB_DB,
     REFRESH_TOKEN: process.env.REFRESH_TOKEN,
     YAHOO_APP_ID: process.env.YAHOO_APP_ID,
